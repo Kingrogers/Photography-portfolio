@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Parmgill — Fashion & Editorial Photography</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Montserrat:wght@300;400;500;600;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink: #0e0c0a;
+    --warm: #f7f2eb;
+    --dust: #e8e0d4;
+    --gold: #b8966e;
+    --gold-light: #d4b48c;
+    --mid: #7a6f63;
+    --radius: 2px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--ink);
+    color: var(--warm);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CURSOR */
+  .cursor {
+    position: fixed; width: 10px; height: 10px;
+    background: var(--gold); border-radius: 50%;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%, -50%);
+    mix-blend-mode: difference;
+    transition: transform 0.1s;
+  }
+  .cursor-ring {
+    position: fixed; width: 36px; height: 36px;
+    border: 1px solid var(--gold); border-radius: 50%;
+    pointer-events: none; z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: all 0.18s ease; opacity: 0.6;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100; display: flex;
+    justify-content: space-between; align-items: center;
+    padding: 28px 52px;
+  }
+  nav::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(14,12,10,0.85) 0%, transparent 100%);
+    pointer-events: none;
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-weight: 300;
+    letter-spacing: 6px; text-transform: uppercase;
+    color: var(--warm); text-decoration: none;
+    position: relative; z-index: 1;
+  }
+  .nav-links { display: flex; gap: 40px; list-style: none; position: relative; z-index: 1; }
+  .nav-links a {
+    font-size: 10px; font-weight: 600; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--warm); text-decoration: none;
+    opacity: 0.7; transition: opacity 0.2s;
+  }
+  .nav-links a:hover { opacity: 1; }
+
+  /* HERO */
+  #home {
+    position: relative; height: 100vh;
+    display: grid; grid-template-columns: 1fr 1fr; overflow: hidden;
+  }
+  .hero-left {
+    background: #1a1612;
+    display: flex; flex-direction: column;
+    justify-content: flex-end; padding: 80px 52px;
+    position: relative; overflow: hidden;
+  }
+  .hero-left::after {
+    content: ''; position: absolute; top: 0; right: 0;
+    width: 1px; height: 100%;
+    background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+    opacity: 0.4;
+  }
+  .hero-issue {
+    font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 24px;
+    opacity: 0; animation: fadeUp 1s 0.3s forwards;
+  }
+  .hero-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(72px, 9vw, 120px);
+    font-weight: 300; line-height: 0.9; letter-spacing: -2px; color: var(--warm);
+    opacity: 0; animation: fadeUp 1s 0.5s forwards;
+  }
+  .hero-name em { font-style: italic; color: var(--gold-light); display: block; }
+  .hero-tagline {
+    margin-top: 32px; font-size: 11px; letter-spacing: 2px;
+    color: var(--mid); text-transform: uppercase; max-width: 280px; line-height: 2;
+    opacity: 0; animation: fadeUp 1s 0.7s forwards;
+  }
+  .hero-scroll {
+    margin-top: 60px; display: flex; align-items: center; gap: 16px;
+    font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold);
+    opacity: 0; animation: fadeUp 1s 0.9s forwards;
+  }
+  .hero-scroll-line {
+    width: 48px; height: 1px; background: var(--gold);
+    transform-origin: left; animation: expandLine 1.5s 1.2s both;
+  }
+  .hero-right { position: relative; overflow: hidden; }
+  .hero-img-placeholder {
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, #1c1814 0%, #2a2219 40%, #1a1410 100%);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 16px;
+  }
+  .hero-photo-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 11px; letter-spacing: 4px; text-transform: uppercase;
+    color: var(--gold); opacity: 0.5;
+  }
+  .photo-icon {
+    width: 72px; height: 72px;
+    border: 1px solid var(--gold); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; opacity: 0.4;
+  }
+  .hero-vol {
+    position: absolute; bottom: 36px; right: 36px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 11px; letter-spacing: 3px; color: var(--gold); opacity: 0.45;
+    writing-mode: vertical-rl;
+  }
+
+  /* MARQUEE */
+  .marquee-bar { background: var(--gold); padding: 12px 0; overflow: hidden; white-space: nowrap; }
+  .marquee-track { display: inline-flex; animation: marquee 24s linear infinite; }
+  .marquee-item { font-size: 10px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: var(--ink); padding: 0 36px; }
+  .marquee-dot { color: var(--ink); opacity: 0.4; padding: 0 8px; }
+
+  /* SECTIONS */
+  section { padding: 120px 52px; }
+  .section-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 5px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 20px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .section-label::before { content: ''; width: 32px; height: 1px; background: var(--gold); flex-shrink: 0; }
+
+  /* WORK */
+  #work { background: var(--ink); padding-top: 80px; }
+  .work-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 64px; }
+  .work-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(48px, 6vw, 80px); font-weight: 300; line-height: 1; letter-spacing: -1px; }
+  .work-title em { font-style: italic; color: var(--gold-light); }
+  .work-count { font-size: 11px; color: var(--mid); letter-spacing: 2px; }
+
+  .magazine-grid { display: grid; grid-template-columns: repeat(12, 1fr); grid-template-rows: auto; gap: 3px; }
+  .grid-item { overflow: hidden; position: relative; cursor: none; }
+  .grid-item:nth-child(1) { grid-column: 1/6; grid-row: 1/3; }
+  .grid-item:nth-child(2) { grid-column: 6/9; grid-row: 1/2; }
+  .grid-item:nth-child(3) { grid-column: 9/13; grid-row: 1/2; }
+  .grid-item:nth-child(4) { grid-column: 6/10; grid-row: 2/3; }
+  .grid-item:nth-child(5) { grid-column: 10/13; grid-row: 2/3; }
+  .grid-item:nth-child(6) { grid-column: 1/5; grid-row: 3/4; }
+  .grid-item:nth-child(7) { grid-column: 5/9; grid-row: 3/4; }
+  .grid-item:nth-child(8) { grid-column: 9/13; grid-row: 3/4; }
+
+  .grid-photo {
+    width: 100%; height: 100%; min-height: 280px;
+    background: #1a1612;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 8px;
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    font-family: 'Cormorant Garamond', serif; font-size: 12px; letter-spacing: 2px; color: var(--gold); opacity: 0.4;
+  }
+  .grid-item:hover .grid-photo { transform: scale(1.04); }
+  .grid-item:nth-child(1) .grid-photo { background: linear-gradient(160deg,#1f1a14,#2c231a); min-height: 480px; }
+  .grid-item:nth-child(2) .grid-photo { background: linear-gradient(140deg,#191510,#251e16); }
+  .grid-item:nth-child(3) .grid-photo { background: linear-gradient(200deg,#1a1310,#221b12); }
+  .grid-item:nth-child(4) .grid-photo { background: linear-gradient(120deg,#211b13,#1a1510); }
+  .grid-item:nth-child(5) .grid-photo { background: linear-gradient(160deg,#161210,#1e180e); }
+  .grid-item:nth-child(6) .grid-photo { background: linear-gradient(140deg,#1c1812,#251f15); }
+  .grid-item:nth-child(7) .grid-photo { background: linear-gradient(200deg,#18130e,#201912); }
+  .grid-item:nth-child(8) .grid-photo { background: linear-gradient(120deg,#1e1a10,#171310); }
+
+  .grid-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(14,12,10,0.85) 0%, transparent 60%);
+    opacity: 0; transition: opacity 0.4s;
+    display: flex; flex-direction: column; justify-content: flex-end; padding: 24px;
+  }
+  .grid-item:hover .grid-overlay { opacity: 1; }
+  .grid-overlay-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 300; letter-spacing: 1px; margin-bottom: 4px; }
+  .grid-overlay-tag { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); }
+  .photo-placeholder-icon { font-size: 32px; opacity: 0.3; }
+  .photo-placeholder-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; }
+
+  /* ABOUT */
+  #about { background: var(--warm); color: var(--ink); }
+  .about-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 80px; align-items: start; }
+  .about-img-wrap { position: relative; }
+  .about-img {
+    width: 100%; aspect-ratio: 3/4;
+    background: linear-gradient(160deg, #c8b99a, #a08060);
+    border-radius: var(--radius);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 12px;
+    color: rgba(14,12,10,0.35); font-family: 'Cormorant Garamond', serif;
+    font-size: 12px; letter-spacing: 2px;
+  }
+  .about-img-tag {
+    position: absolute; bottom: -20px; right: -20px;
+    background: var(--gold); color: var(--ink);
+    font-size: 9px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+    padding: 14px 18px; writing-mode: vertical-rl;
+  }
+  .about-content { padding-top: 20px; }
+  .about-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(40px, 4.5vw, 60px); font-weight: 300; line-height: 1.1; letter-spacing: -0.5px; margin-bottom: 32px; }
+  .about-title em { font-style: italic; color: var(--gold); }
+  .about-body { font-size: 14px; line-height: 2; color: #4a4035; margin-bottom: 28px; max-width: 460px; }
+  .about-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; border: 1px solid #d0c8be; margin-bottom: 40px; }
+  .stat { padding: 24px 20px; background: var(--warm); border-right: 1px solid #d0c8be; }
+  .stat:last-child { border-right: none; }
+  .stat-num { font-family: 'Cormorant Garamond', serif; font-size: 40px; font-weight: 300; color: var(--gold); line-height: 1; margin-bottom: 4px; }
+  .stat-label { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--mid); }
+  .skills-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .skill-tag {
+    border: 1px solid #c0b8ae; color: #5a5045;
+    font-size: 9px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+    padding: 8px 14px; border-radius: var(--radius); transition: background 0.2s, color 0.2s;
+  }
+  .skill-tag:hover { background: var(--ink); color: var(--warm); border-color: var(--ink); }
+
+  /* CONTACT */
+  #contact { background: var(--ink); position: relative; overflow: hidden; }
+  #contact::before {
+    content: 'CONTACT'; position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(100px, 14vw, 200px); font-weight: 700;
+    color: rgba(184,150,110,0.04); white-space: nowrap; pointer-events: none; letter-spacing: 10px;
+  }
+  .contact-inner { max-width: 700px; margin: 0 auto; text-align: center; position: relative; z-index: 1; }
+  .contact-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(52px, 7vw, 96px); font-weight: 300; line-height: 1; letter-spacing: -1px; margin-bottom: 24px; }
+  .contact-title em { font-style: italic; color: var(--gold-light); display: block; }
+  .contact-sub { font-size: 13px; color: var(--mid); line-height: 2; margin-bottom: 52px; letter-spacing: 0.5px; }
+  .contact-links { display: flex; flex-direction: column; gap: 1px; margin-bottom: 52px; }
+  .contact-link-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px 32px; border: 1px solid rgba(255,255,255,0.07);
+    transition: background 0.2s, border-color 0.2s; cursor: none;
+  }
+  .contact-link-row:hover { background: rgba(184,150,110,0.08); border-color: rgba(184,150,110,0.3); }
+  .contact-link-label { font-size: 9px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); }
+  .contact-link-val { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 300; letter-spacing: 1px; }
+  .contact-link-arrow { color: var(--gold); font-size: 18px; }
+  .cta-btn {
+    display: inline-block; border: 1px solid var(--gold); color: var(--gold);
+    font-size: 10px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase;
+    padding: 20px 48px; text-decoration: none; transition: background 0.3s, color 0.3s; cursor: none;
+  }
+  .cta-btn:hover { background: var(--gold); color: var(--ink); }
+
+  /* FOOTER */
+  footer {
+    background: #080604; padding: 32px 52px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-top: 1px solid rgba(184,150,110,0.15);
+  }
+  .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 18px; letter-spacing: 5px; text-transform: uppercase; color: var(--gold); opacity: 0.6; }
+  .footer-copy { font-size: 10px; letter-spacing: 2px; color: var(--mid); }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes expandLine { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.9s cubic-bezier(0.25,0.46,0.45,0.94), transform 0.9s cubic-bezier(0.25,0.46,0.45,0.94); }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* MOBILE */
+  @media (max-width: 768px) {
+    nav { padding: 20px 24px; }
+    .nav-links { display: none; }
+    #home { grid-template-columns: 1fr; }
+    .hero-right { display: none; }
+    .hero-left { padding: 100px 24px 60px; }
+    section { padding: 80px 24px; }
+    .about-grid { grid-template-columns: 1fr; gap: 40px; }
+    .magazine-grid { grid-template-columns: 1fr 1fr; gap: 2px; }
+    .grid-item:nth-child(n) { grid-column: auto; grid-row: auto; }
+    .grid-item:nth-child(1) { grid-column: 1/3; }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#home">Parmgill</a>
+  <ul class="nav-links">
+    <li><a href="#work">Work</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="home">
+  <div class="hero-left">
+    <div class="hero-issue">Fashion &amp; Editorial Photography</div>
+    <h1 class="hero-name">Parm<em>gill.</em></h1>
+    <p class="hero-tagline">Capturing the intersection of fashion, identity, and light.</p>
+    <div class="hero-scroll">
+      <div class="hero-scroll-line"></div>
+      Scroll to explore
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-img-placeholder">
+      <div class="photo-icon">◈</div>
+      <div class="hero-photo-label">Your hero image here</div>
+    </div>
+    <div class="hero-vol">Issue 001 — 2026</div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-bar">
+  <div class="marquee-track">
+    <span class="marquee-item">Fashion</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Editorial</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Portrait</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Campaign</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Lookbook</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Runway</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Parmgill</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Fashion</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Editorial</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Portrait</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Campaign</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Lookbook</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Runway</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Parmgill</span><span class="marquee-dot">✦</span>
+  </div>
+</div>
+
+<!-- WORK -->
+<section id="work">
+  <div class="work-header reveal">
+    <div>
+      <div class="section-label">Selected Work</div>
+      <h2 class="work-title">The <em>Portfolio.</em></h2>
+    </div>
+    <div class="work-count">08 Projects</div>
+  </div>
+  <div class="magazine-grid reveal">
+    <div class="grid-item">
+      <div class="grid-photo"><div class="photo-placeholder-icon">◈</div><div class="photo-placeholder-label">Your photo</div></div>
+      <div class="grid-overlay"><div class="grid-overlay-title">Noir Séries Vol. I</div><div class="grid-overlay-tag">Editorial · 2025</div></div>
+    </div>
+    <div class="grid-item">
+      <div class="grid-photo"><div class="photo-placeholder-icon">◈</div><div class="photo-placeholder-label">Your photo</div></div>
+      <div class="grid-overlay"><div class="grid-overlay-title">Autumn Campaign</div><div class="grid-overlay-tag">Campaign · 2025</div></div>
+    </div>
+    <div class="grid-item">
+      <div class="grid-photo"><div class="photo-placeholder-icon">◈</div><div class="photo-placeholder-label">Your photo</div></div>
+      <div class="grid-overlay"><div class="grid-overlay-title">Golden Hour</div><div class="grid-overlay-tag">Portrait · 2025</div></div>
+    </div>
+    <div class="grid-item">
+      <div class="grid-photo"><div class="photo-placeholder-icon">◈</div><div class="photo-placeholder-label">Your photo</div></div>
+      <div class="grid-overlay"><div class="grid-overlay-title">Minimal Structures</div><div class="grid-overlay-tag">Lookbook · 2024</div></div>
+    </div>
+    <div class="grid-item">
+      <div class="grid-photo"><div class="photo-placeholder-icon">◈</div><div class="photo-placeholder-label">Your photo</div></div>
+      <div class="grid-overlay"><div class="grid-overlay-title">Urban Texture</div><div class="grid-overlay-tag">Street · 2024</div></div>
+    </div>
+    <div class="grid-item">
+      <div class="grid-photo"><div class="photo-placeholder-icon">◈</div><div class="photo-placeholder-label">Your photo</div></div>
+      <div class="grid-overlay"><div class="grid-overlay-title">Shadow &amp; Form</div><div class="grid-overlay-tag">Editorial · 2024</div></div>
+    </div>
+    <div class="grid-item">
+      <div class="grid-photo"><div class="photo-placeholder-icon">◈</div><div class="photo-placeholder-label">Your photo</div></div>
+      <div class="grid-overlay"><div class="grid-overlay-title">Runway Series</div><div class="grid-overlay-tag">Runway · 2024</div></div>
+    </div>
+    <div class="grid-item">
+      <div class="grid-photo"><div class="photo-placeholder-icon">◈</div><div class="photo-placeholder-label">Your photo</div></div>
+      <div class="grid-overlay"><div class="grid-overlay-title">Raw Identity</div><div class="grid-overlay-tag">Portrait · 2023</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-grid">
+    <div class="about-img-wrap reveal">
+      <div class="about-img">
+        <div style="font-size:40px;opacity:0.3;">◈</div>
+        <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;">Your portrait</div>
+      </div>
+      <div class="about-img-tag">Parmgill · Photographer</div>
+    </div>
+    <div class="about-content reveal" style="transition-delay:0.15s">
+      <div class="section-label" style="color:var(--gold)">About</div>
+      <h2 class="about-title">The eye<br>behind the <em>lens.</em></h2>
+      <p class="about-body">I'm Parmgill — a fashion and editorial photographer with a deep obsession for light, texture, and the human form. My work lives at the intersection of high fashion and raw emotion, crafted with intention in every frame.</p>
+      <p class="about-body">Based in Surrey, BC. Available for campaigns, lookbooks, editorials, and portraits worldwide.</p>
+      <div class="about-stats">
+        <div class="stat"><div class="stat-num">4+</div><div class="stat-label">Years shooting</div></div>
+        <div class="stat"><div class="stat-num">60+</div><div class="stat-label">Editorials</div></div>
+        <div class="stat"><div class="stat-num">∞</div><div class="stat-label">Frames taken</div></div>
+      </div>
+      <div class="skills-row">
+        <span class="skill-tag">Fashion</span>
+        <span class="skill-tag">Editorial</span>
+        <span class="skill-tag">Portrait</span>
+        <span class="skill-tag">Lookbook</span>
+        <span class="skill-tag">Campaign</span>
+        <span class="skill-tag">Retouching</span>
+        <span class="skill-tag">Art Direction</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner">
+    <div class="section-label" style="justify-content:center;margin-bottom:32px;">Contact</div>
+    <h2 class="contact-title reveal">Let's create <em>together.</em></h2>
+    <p class="contact-sub reveal" style="transition-delay:0.1s">Open for editorial commissions, brand campaigns,<br>and creative collaborations.</p>
+    <div class="contact-links reveal" style="transition-delay:0.2s">
+      <div class="contact-link-row">
+        <span class="contact-link-label">Email</span>
+        <span class="contact-link-val">hello@parmgill.com</span>
+        <span class="contact-link-arrow">→</span>
+      </div>
+      <div class="contact-link-row">
+        <span class="contact-link-label">Instagram</span>
+        <span class="contact-link-val">@parmgill</span>
+        <span class="contact-link-arrow">→</span>
+      </div>
+      <div class="contact-link-row">
+        <span class="contact-link-label">Location</span>
+        <span class="contact-link-val">Surrey, BC — Worldwide</span>
+        <span class="contact-link-arrow">→</span>
+      </div>
+    </div>
+    <a href="mailto:hello@parmgill.com" class="cta-btn reveal" style="transition-delay:0.3s">Book a Session</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Parmgill</div>
+  <div class="footer-copy">© 2026 Parmgill. All rights reserved.</div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+  function animateRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  document.querySelectorAll('a, button, .grid-item, .contact-link-row, .skill-tag, .cta-btn').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      ring.style.transform = 'translate(-50%,-50%) scale(2.2)';
+      ring.style.opacity = '0.3';
+    });
+    el.addEventListener('mouseleave', () => {
+      ring.style.transform = 'translate(-50%,-50%) scale(1)';
+      ring.style.opacity = '0.6';
+    });
+  });
+
+  // Scroll reveal
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(r => observer.observe(r));
+</script>
+</body>
+</html>
